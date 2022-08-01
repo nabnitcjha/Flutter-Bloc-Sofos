@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:crud_app/quiz.dart';
 import 'package:crud_app/result.dart';
+import 'package:crud_app/model/user.dart';
+
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MyCoolApp());
 
@@ -42,7 +49,19 @@ class _MyCoolAppState extends State<MyCoolApp> {
   ];
   var _questionIndex = 0;
   var _totalScore = 0;
+  var _myProfile={'title':'','userId':'','id':''};
+  var _userName='';
+  var _userId=0;
+  var _id=0;
 
+
+  void _userProfile<t>(user){
+    setState(() {
+      _userName=user.title;
+      _userId=user.userId;
+      _id=user.id;
+    });
+  }
   void _resetQuiz() {
     setState(() {
       _questionIndex = 0;
@@ -50,6 +69,21 @@ class _MyCoolAppState extends State<MyCoolApp> {
     });
   }
 
+ _testAPI() async{
+  var usrPro = null;
+   final response = await http
+      .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
+  if (response.statusCode == 200) {
+    usrPro = User.fromJson(jsonDecode(response.body));
+
+    _userProfile(usrPro);
+    print(_userName);
+    print(_userId);
+    print(_id);
+  } else {
+    throw Exception('Failed to load user');
+  }
+  }
   void _answerQuestion(int score) {
     _totalScore += score;
     setState(() {
@@ -70,7 +104,7 @@ class _MyCoolAppState extends State<MyCoolApp> {
                 questionIndex: _questionIndex,
                 answerQuestion: _answerQuestion,
               )
-            : Result(_totalScore, _resetQuiz),
+            : Result(_totalScore, _resetQuiz,_testAPI,_userName),
       ),
     );
   }

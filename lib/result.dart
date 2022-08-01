@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 class Result extends StatelessWidget {
   final int resultScore;
   final VoidCallback resetQuiz;
+final VoidCallback testAPI;
 
-  Result(this.resultScore, this.resetQuiz);
+  var userName;
+  
+  Result(this.resultScore, this.resetQuiz,this.testAPI,this.userName);
 
     String get resultPhrase {
     String resultText;
@@ -19,6 +22,8 @@ class Result extends StatelessWidget {
     }
     return resultText;
   }
+  
+
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +39,16 @@ class Result extends StatelessWidget {
             onPressed: resetQuiz,
             child: Text('Reset Quiz!'),
           ),
+           TextButton(
+            onPressed: testAPI,
+            child: Text('API TEST!'),
+          ),
+          Text(
+            userName,
+            style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          
         ],
       ),
     );
