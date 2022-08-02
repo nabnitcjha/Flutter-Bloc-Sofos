@@ -61,12 +61,12 @@ final VoidCallback getStudentTeacher;
             textAlign: TextAlign.center,
           ),
           Text(
-            token,
+            teacherName,
             style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           Text(
-            teacherName,
+            token,
             style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
