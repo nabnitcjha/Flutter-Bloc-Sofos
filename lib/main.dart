@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:crud_app/quiz.dart';
 import 'package:crud_app/result.dart';
 import 'package:crud_app/model/user.dart';
+import 'package:crud_app/model/login.dart';
+import 'package:crud_app/model/studentTeacher.dart';
 
 import 'dart:async';
 import 'dart:convert';
@@ -51,6 +53,8 @@ class _MyCoolAppState extends State<MyCoolApp> {
   var _totalScore = 0;
   var _myProfile={'title':'','userId':'','id':''};
   var _userName='';
+  var _token='';
+  var _teacherName='';
   var _userId=0;
   var _id=0;
 
@@ -62,12 +66,61 @@ class _MyCoolAppState extends State<MyCoolApp> {
       _id=user.id;
     });
   }
+
+    void _proactiveLogin<t>(token){
+    setState(() {
+      _token=token;
+    });
+  }
+
+    void _stuentTeacher<t>(techName){
+    setState(() {
+      _teacherName=techName;
+    });
+  }
+
   void _resetQuiz() {
     setState(() {
       _questionIndex = 0;
       _totalScore = 0;
     });
   }
+
+ _login() async {
+  var email = 'Nick@John.Com';
+  var password = '1234';
+  final response = await http.post(
+    Uri.parse('https://connect.proactivetutors.com/api/login'),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode(<String, String>{
+      'email': email,
+      'password': password,
+    }),
+  );
+
+  var body = jsonDecode(response.body);
+  print('login_response $body');
+  var accessToken = body['access_token'];
+  _proactiveLogin(accessToken);
+  // getStudentTeacher(accessToken);
+}
+
+_getStudentTeacher() async {
+  var accessToken = _token;
+  var studentId = 16;
+  final url = Uri.parse(
+      'https://connect.proactivetutors.com/api/getStudentTeachers/$studentId');
+  final response = await http.get(url, headers: {
+    'authorization': 'Bearer $accessToken',
+  });
+  var body = jsonDecode(response.body);
+   var result= body['result'];
+   var name = result['first_name']+' '+result['last_name'];
+   print('result $name');
+  _stuentTeacher(name);
+}
 
  _testAPI() async{
   var usrPro = null;
@@ -104,7 +157,7 @@ class _MyCoolAppState extends State<MyCoolApp> {
                 questionIndex: _questionIndex,
                 answerQuestion: _answerQuestion,
               )
-            : Result(_totalScore, _resetQuiz,_testAPI,_userName),
+            : Result(_totalScore, _resetQuiz,_testAPI,_getStudentTeacher,_login,_userName,_token,_teacherName),
       ),
     );
   }
